@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 from forms import AddItem
+from cloudipsp import Api, Checkout
 
 
 app = Flask(__name__)
@@ -18,7 +19,7 @@ class Item(db.Model):
     text = db.Column(db.Text, nullable=False)
 
     def __repr__(self):
-        return f"<Item {self.id}>"
+        return self.title
 
 
 @app.route('/create', methods=["POST", "GET"])
@@ -40,28 +41,34 @@ def create():
 
 @app.route('/product/<int:id>')
 def get_product(id):
-    return 'hello'
+    try:
+        product = Item.query.get(id)
+    except:
+        print("Ошибка получения  из БД")
+        return redirect('/')
+
+    return render_template('get_product.html', product=product)
 
 
-@app.route('/products')
-def get_products():
+@app.route('/')
+def index():
     products = []
     try:
-        products = Item.query.order_by(Item.id.desc()).all()
+        products = Item.query.order_by(Item.price).all()
     except:
         print("Ошибка получения  из БД")
 
     return render_template('get_products.html', title='Products', products=products)
 
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-
 @app.route('/about')
 def about():
     return render_template('about.html', title='The details')
+
+
+@app.route('/product/<int:id>/buy')
+def buy(id):
+    return f'buy buy buy {id}'
 
 
 if __name__ == '__main__':
