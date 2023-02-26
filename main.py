@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 from forms import AddItem
 from cloudipsp import Api, Checkout
-
+from private_settings import merchant_id, secret_key
 
 app = Flask(__name__)
 SECRET_KEY = 'juicy-pussy-money-money-pussy-juicy'
@@ -68,7 +68,16 @@ def about():
 
 @app.route('/product/<int:id>/buy')
 def buy(id):
-    return f'buy buy buy {id}'
+    product = Item.query.get(id)
+    api = Api(merchant_id=merchant_id, #номер компании
+              secret_key=secret_key) #сектерный ключ после регистрации
+    checkout = Checkout(api=api)
+    data = {
+        "currency": "UAH",
+        "amount": str(product.price) + '00'
+    }
+    url = checkout.url(data).get('checkout_url')
+    return redirect(url)
 
 
 if __name__ == '__main__':
