@@ -1,11 +1,18 @@
 {% extends 'base.html' %}
-
 {% block body %}
 
-<div class="container">
-<h2>{{ title }}</h2>
-<p>Quickly build an effective pricing table for your potential customers with this
-            Bootstrap example. It’s built with default Bootstrap components and utilities with little customization.</p>
-</div>
+<div class="container mt-5">
+    <h1>{{ title }}</h1>
+    <br>
+    <form method="post" action="">
 
+        {{ form.hidden_tag() }}
+        <p>{{ form.title.label() }} {{ form.title() }}</p>
+        <p>{{ form.price.label() }} {{ form.price() }}</p>
+        <p>{{ form.text.label() }} {{ form.text() }}</p>
+        <p>{{ form.submit() }}</p>
+
+    </form>
+
+</div>
 {% endblock %}
